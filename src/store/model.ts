@@ -8,6 +8,7 @@ const useModelStore = defineStore("models", () => {
   const systemPrompt = ref<string>("");
   const question = ref<string>("");
   const isSettingsOpen = ref<boolean>(false);
+  const debateMode = ref<boolean>(false);
   const answers = ref<any[]>([]);
 
   const updateAnswersState = () => {
@@ -30,7 +31,20 @@ const useModelStore = defineStore("models", () => {
       if (systemPrompt.value.trim()) {
         messagesPayload.push({ role: "system", content: systemPrompt.value });
       }
-      messagesPayload.push({ role: "user", content: question.value });
+      
+      let finalQuestion = question.value;
+      if (debateMode.value && index > 0) {
+        let debateContext = "Contexto previo del debate:\n\n";
+        for (let i = 0; i < index; i++) {
+          if (answers.value[i].text && answers.value[i].status === "Completado") {
+            debateContext += `--- Respuesta de ${answers.value[i].model} ---\n${answers.value[i].text}\n\n`;
+          }
+        }
+        debateContext += "Con base en el planteamiento original y el contexto previo de los otros modelos, presenta tu perspectiva, refutando, complementando o debatiendo lo mencionado.\n\nPlanteamiento original: " + question.value;
+        messagesPayload.push({ role: "user", content: debateContext });
+      } else {
+        messagesPayload.push({ role: "user", content: question.value });
+      }
 
       const res = await axios.post(
         "https://openrouter.ai/api/v1/chat/completions",
@@ -109,12 +123,18 @@ const useModelStore = defineStore("models", () => {
     }));
 
     const promises = [];
-    if (models.value.length > 0) promises.push(sendPrompModelOne());
-    if (models.value.length > 1) promises.push(sendPrompModelTwo());
-    if (models.value.length > 2) promises.push(sendPrompModelThree());
-    if (models.value.length > 3) promises.push(sendPromptModelFour());
-
-    await Promise.allSettled(promises);
+    if (debateMode.value) {
+      if (models.value.length > 0) await sendPrompModelOne();
+      if (models.value.length > 1) await sendPrompModelTwo();
+      if (models.value.length > 2) await sendPrompModelThree();
+      if (models.value.length > 3) await sendPromptModelFour();
+    } else {
+      if (models.value.length > 0) promises.push(sendPrompModelOne());
+      if (models.value.length > 1) promises.push(sendPrompModelTwo());
+      if (models.value.length > 2) promises.push(sendPrompModelThree());
+      if (models.value.length > 3) promises.push(sendPromptModelFour());
+      await Promise.allSettled(promises);
+    }
   };
 
   return {
@@ -124,6 +144,7 @@ const useModelStore = defineStore("models", () => {
     question,
     answers,
     isSettingsOpen,
+    debateMode,
     updateAnswersState,
     sendPrompModelOne,
     sendPrompModelTwo,

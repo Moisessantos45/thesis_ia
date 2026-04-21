@@ -16,11 +16,23 @@
                 placeholder="Ej: ¿Cuáles son las implicaciones éticas de la edición genética en embriones humanos?"
                 @keydown.ctrl.enter="askQuestion"></textarea>
               <div class="flex items-center justify-between">
-                <p class="text-xs text-slate-400 hidden sm:block">Presiona <kbd
-                    class="px-1.5 py-0.5 rounded border border-slate-200 bg-slate-50 font-mono text-[10px] shadow-sm">Ctrl</kbd>
-                  + <kbd
-                    class="px-1.5 py-0.5 rounded border border-slate-200 bg-slate-50 font-mono text-[10px] shadow-sm">Enter</kbd>
-                  para enviar</p>
+                <div class="flex items-center gap-6">
+                  <p class="text-xs text-slate-400 hidden sm:block">Presiona <kbd
+                      class="px-1.5 py-0.5 rounded border border-slate-200 bg-slate-50 font-mono text-[10px] shadow-sm">Ctrl</kbd>
+                    + <kbd
+                      class="px-1.5 py-0.5 rounded border border-slate-200 bg-slate-50 font-mono text-[10px] shadow-sm">Enter</kbd>
+                    para enviar</p>
+                  
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <div class="relative">
+                      <input type="checkbox" v-model="debateMode" class="sr-only" />
+                      <div class="block w-10 h-6 rounded-full transition-colors" :class="debateMode ? 'bg-blue-600' : 'bg-slate-300'"></div>
+                      <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform" :class="debateMode ? 'translate-x-4' : ''"></div>
+                    </div>
+                    <span class="text-sm font-semibold text-slate-700">Modo Debate</span>
+                  </label>
+                </div>
+                
                 <button @click="askQuestion" :disabled="!question.trim() || models.length === 0"
                   class="ml-auto px-6 py-2.5 bg-blue-800 hover:bg-blue-900 disabled:opacity-50 disabled:hover:bg-blue-800 text-white font-semibold rounded-md shadow-sm transition-colors flex items-center gap-2 text-sm">
                   Generar Análisis
@@ -146,7 +158,7 @@ import SettingsModal from './components/SettingsModal.vue'
 import useModelStore from './store/model'
 
 const store = useModelStore()
-const { question, isSettingsOpen, models, answers } = storeToRefs(store)
+const { question, isSettingsOpen, models, answers, debateMode } = storeToRefs(store)
 
 const askQuestion = async () => {
   if (!question.value.trim()) return
