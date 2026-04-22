@@ -31,16 +31,20 @@ const useModelStore = defineStore("models", () => {
       if (systemPrompt.value.trim()) {
         messagesPayload.push({ role: "system", content: systemPrompt.value });
       }
-      
-      let finalQuestion = question.value;
+
       if (debateMode.value && index > 0) {
         let debateContext = "Contexto previo del debate:\n\n";
         for (let i = 0; i < index; i++) {
-          if (answers.value[i].text && answers.value[i].status === "Completado") {
+          if (
+            answers.value[i].text &&
+            answers.value[i].status === "Completado"
+          ) {
             debateContext += `--- Respuesta de ${answers.value[i].model} ---\n${answers.value[i].text}\n\n`;
           }
         }
-        debateContext += "Con base en el planteamiento original y el contexto previo de los otros modelos, presenta tu perspectiva, refutando, complementando o debatiendo lo mencionado.\n\nPlanteamiento original: " + question.value;
+        debateContext +=
+          "Con base en el planteamiento original y el contexto previo de los otros modelos, presenta tu perspectiva, refutando, complementando o debatiendo lo mencionado.\n\nPlanteamiento original: " +
+          question.value;
         messagesPayload.push({ role: "user", content: debateContext });
       } else {
         messagesPayload.push({ role: "user", content: question.value });
@@ -60,7 +64,7 @@ const useModelStore = defineStore("models", () => {
           },
           responseType: "stream",
           adapter: "fetch",
-        }
+        },
       );
 
       const reader = res.data?.getReader?.();
