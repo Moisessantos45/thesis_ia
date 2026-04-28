@@ -6,7 +6,7 @@ const store = useModelStore()
 const newModelName = ref('')
 
 const addModel = () => {
-  if (newModelName.value.trim() && store.models.length < 4) {
+  if (newModelName.value.trim()) {
     store.models.push(newModelName.value.trim())
     newModelName.value = ''
     store.updateAnswersState()
@@ -55,10 +55,10 @@ const closeModal = () => {
         </section>
 
         <section>
-          <label class="block text-sm font-bold text-slate-800 mb-1">Modelos Activos (Máx. 4)</label>
+          <label class="block text-sm font-bold text-slate-800 mb-1">Modelos Activos</label>
           <p class="text-xs text-slate-500 mb-4">Agrega los modelos que participarán en la comparativa de análisis.</p>
 
-          <ul class="flex flex-col gap-2 mb-4">
+          <ul class="flex flex-col gap-2 mb-4 max-h-48 overflow-y-auto pr-2">
             <li v-for="(model, index) in store.models" :key="index"
               class="flex items-center justify-between px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-md shadow-sm">
               <span class="text-sm font-semibold text-slate-700">{{ model }}</span>
@@ -79,20 +79,12 @@ const closeModal = () => {
           <div class="flex gap-2">
             <input v-model="newModelName" @keydown.enter="addModel" type="text"
               placeholder="Nombre del modelo (Ej: openai/gpt-4-turbo)"
-              class="flex-1 px-3 py-2.5 text-sm rounded-md border border-slate-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none text-slate-700 bg-white shadow-sm"
-              :disabled="store.models.length >= 4" />
-            <button @click="addModel" :disabled="store.models.length >= 4 || !newModelName.trim()"
+              class="flex-1 px-3 py-2.5 text-sm rounded-md border border-slate-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none text-slate-700 bg-white shadow-sm" />
+            <button @click="addModel" :disabled="!newModelName.trim()"
               class="px-4 py-2.5 bg-slate-800 hover:bg-slate-900 disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-md shadow-sm transition-colors">
               Añadir
             </button>
           </div>
-          <p v-if="store.models.length >= 4" class="text-xs font-medium text-amber-600 mt-3 flex items-center gap-1.5">
-            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-            Límite de 4 modelos alcanzado.
-          </p>
         </section>
       </div>
 
