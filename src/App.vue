@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-800">
     <Header :is-settings-open="isSettingsOpen" @close-settings="isSettingsOpen = true" />
     <main class="flex-1 overflow-y-auto p-6 md:p-8">
-      <div class="max-w-[1400px] mx-auto flex flex-col xl:flex-row gap-8">
+      <div class="max-w-350 mx-auto flex flex-col xl:flex-row gap-8">
 
         <div class="w-full xl:w-[70%] flex flex-col gap-8">
           <section class="bg-white rounded-xl border border-slate-200/60 shadow-sm p-6 md:p-8">
