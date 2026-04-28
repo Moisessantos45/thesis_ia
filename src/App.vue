@@ -22,17 +22,19 @@
                     + <kbd
                       class="px-1.5 py-0.5 rounded border border-slate-200 bg-slate-50 font-mono text-[10px] shadow-sm">Enter</kbd>
                     para enviar</p>
-                  
+
                   <label class="flex items-center gap-2 cursor-pointer">
                     <div class="relative">
                       <input type="checkbox" v-model="debateMode" class="sr-only" />
-                      <div class="block w-10 h-6 rounded-full transition-colors" :class="debateMode ? 'bg-blue-600' : 'bg-slate-300'"></div>
-                      <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform" :class="debateMode ? 'translate-x-4' : ''"></div>
+                      <div class="block w-10 h-6 rounded-full transition-colors"
+                        :class="debateMode ? 'bg-blue-600' : 'bg-slate-300'"></div>
+                      <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform"
+                        :class="debateMode ? 'translate-x-4' : ''"></div>
                     </div>
                     <span class="text-sm font-semibold text-slate-700">Modo Debate</span>
                   </label>
                 </div>
-                
+
                 <button @click="askQuestion" :disabled="!question.trim() || models.length === 0"
                   class="ml-auto px-6 py-2.5 bg-blue-800 hover:bg-blue-900 disabled:opacity-50 disabled:hover:bg-blue-800 text-white font-semibold rounded-md shadow-sm transition-colors flex items-center gap-2 text-sm">
                   Generar Análisis
@@ -77,8 +79,16 @@
                     {{ answer.text }}
                   </p>
                 </div>
-                <div class="pt-4 border-t border-slate-50 flex justify-end">
-                  <button
+                <div class="pt-4 border-t border-slate-50 flex justify-end gap-2">
+                  <button type="button"
+                    class="text-xs font-semibold text-slate-400 hover:text-blue-700 transition-colors flex items-center gap-1.5 bg-slate-50 hover:bg-blue-50 px-3 py-1.5 rounded-md">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15.536 8.464a5 5 0 010 7.072M17.657 6.343a8 8 0 010 11.314M11 5L6 9H2v6h4l5 4V5z" />
+                    </svg>
+                    Escuchar
+                  </button>
+                  <button type="button" @click="copyToClipboard(answer.text)"
                     class="text-xs font-semibold text-slate-400 hover:text-blue-700 transition-colors flex items-center gap-1.5 bg-slate-50 hover:bg-blue-50 px-3 py-1.5 rounded-md">
                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -116,16 +126,6 @@
                 <span class="text-sm font-semibold text-slate-700">{{ model }}</span>
               </li>
             </ul>
-            <p v-if="models.length < 4"
-              class="text-xs text-amber-700 mt-5 bg-amber-50 p-3 rounded-md border border-amber-200/60 flex gap-2 items-start">
-              <svg class="w-4 h-4 shrink-0 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>Se recomiendan 4 modelos para una comparativa óptima. Tienes configurados {{ models.length
-                }}.</span>
-            </p>
           </div>
 
           <div class="bg-blue-50/70 rounded-xl border border-blue-100/70 p-6">
@@ -169,6 +169,15 @@ const askQuestion = async () => {
   }
 
   await store.sendPrompModels()
+}
+
+const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text).then(() => {
+    alert("Cita copiada al portapapeles.")
+  }).catch(err => {
+    console.error("Error al copiar: ", err)
+    alert("No se pudo copiar la cita.")
+  })
 }
 </script>
 
